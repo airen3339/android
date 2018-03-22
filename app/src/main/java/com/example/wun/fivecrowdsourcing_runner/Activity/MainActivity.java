@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.example.wun.fivecrowdsourcing_runner.Adapter.MyFragmentAdapter;
 import com.example.wun.fivecrowdsourcing_runner.Bean.OrderBean;
 import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
+import com.example.wun.fivecrowdsourcing_runner.Fragment.DeliveryFragment;
+import com.example.wun.fivecrowdsourcing_runner.Fragment.PendingGoodFragment;
 import com.example.wun.fivecrowdsourcing_runner.Fragment.TBDFragment;
 import com.example.wun.fivecrowdsourcing_runner.R;
 
@@ -55,12 +57,14 @@ public class MainActivity extends AppCompatActivity
         runner= (Runner) getIntent().getSerializableExtra("runner");
         mFragments = new ArrayList<>();
         mFragments.add(new TBDFragment(runner));
-//        mFragments.add(new TBDFragment(runner));
+        mFragments.add(new PendingGoodFragment(runner));
+        mFragments.add(new DeliveryFragment(runner));
         //mFragments.add(new CompletedFragment());
         //mFragments = new ArrayList<>();
         bindView();
 
     }
+
 
 
     @Override

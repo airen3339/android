@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dip"
                 android:background="#00000000"
-                android:hint="手机号 "
+                android:hint="mob你好，直接点登录即可"
                 android:inputType="number"
                 android:padding="5dip"
                 android:textSize="16sp" />
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dip"
                 android:background="#00000000"
-                android:hint="密码"
+                android:hint="若再次出现，按返回知道出现主界面"
                 android:inputType="textPassword"
                 android:padding="5dip"
                 android:textSize="16sp" />

@@ -52,12 +52,13 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_login);
         setContentView(R.layout.activity_login);
-        //MobSDK.init(this);
-        //sendCode(getApplicationContext());
-
+//        MobSDK.init(this);
+//        sendCode(getApplicationContext());
         initView();
+
+
+
     }
 
     public void sendCode(Context context) {

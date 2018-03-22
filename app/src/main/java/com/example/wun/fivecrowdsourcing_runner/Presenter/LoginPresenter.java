@@ -38,9 +38,13 @@ public class LoginPresenter {
     public void Login(String phone,String password,String url){
 //        //特殊通道，当服务器不行时直接登陆
         if(DataConfig.debugFlag==true) {
+            Long lng=Long.parseLong("11");
             runner.setName("wch");
             runner.setPhone("177740");
+            runner.setRunnerId(lng);
+
             loginView.onSuccess(runner);
+
         }
        servletIP=url+servletName;
        Log.v("servlet",servletIP);
