@@ -85,6 +85,7 @@
 
             </intent-filter>
         </activity>
+        <activity android:name=".Activity.RegisterActivity" />
     </application>
 
 </manifest>

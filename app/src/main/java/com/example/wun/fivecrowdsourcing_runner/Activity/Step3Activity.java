@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -20,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baoyachi.stepview.HorizontalStepView;
+import com.baoyachi.stepview.bean.StepBean;
 import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
 import com.example.wun.fivecrowdsourcing_runner.DataConfig;
 import com.example.wun.fivecrowdsourcing_runner.Presenter.Step3Presenter;
@@ -28,6 +31,8 @@ import com.example.wun.fivecrowdsourcing_runner.Utils.UploadUtil;
 import com.example.wun.fivecrowdsourcing_runner.View.Step3View;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Step3Activity extends AppCompatActivity implements Step3View {
     private Runner runner = new Runner();
@@ -36,8 +41,10 @@ public class Step3Activity extends AppCompatActivity implements Step3View {
     Button click_healthcert;
     //EditText name_edit;
     EditText idcardnumber_edit;
-    Button thrid_step;
+
     String healthcertphoto;
+    private TextView nextStep;
+    List<StepBean> stepsBeanList = new ArrayList<>();
     Step3Presenter step3Presenter = new Step3Presenter(Step3Activity.this);
 
     private static final int CHOOSE_HEALTHCERT =3;
@@ -46,7 +53,19 @@ public class Step3Activity extends AppCompatActivity implements Step3View {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step3);
+        initData();
         initView();
+    }
+    private void initData() {
+        StepBean stepBean0 = new StepBean("基本信息",1);
+        StepBean stepBean1 = new StepBean("资质证书",1);
+        StepBean stepBean2 = new StepBean("身份信息",0);
+        StepBean stepBean3 = new StepBean("已完成",-1);
+        stepsBeanList.add(stepBean0);
+        stepsBeanList.add(stepBean1);
+        stepsBeanList.add(stepBean2);
+        stepsBeanList.add(stepBean3);
+
     }
 
     private void initView() {
@@ -67,8 +86,9 @@ public class Step3Activity extends AppCompatActivity implements Step3View {
         });
        // name_edit = findViewById(R.id.name_edit);
         idcardnumber_edit = findViewById(R.id.idcardnumber_edit);
-        thrid_step = findViewById(R.id.third_step);
-        thrid_step.setOnClickListener(new View.OnClickListener() {
+        nextStep = findViewById(R.id.next_step);
+        nextStep.setText("下一步");
+        nextStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String requestURL = DataConfig.URL + DataConfig.UploadImage;
@@ -79,6 +99,18 @@ public class Step3Activity extends AppCompatActivity implements Step3View {
                 step3Presenter.sendImage(String.valueOf(idcardnumber_edit.getText()), runner,healthcertfile.getName());
             }
         });
+        HorizontalStepView setpview = (HorizontalStepView) findViewById(R.id.step_view1);
+        setpview
+                .setStepViewTexts(stepsBeanList)//总步骤
+                .setTextSize(12)//set textSize
+                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(this, R.color.colorPrimary))//设置 StepsViewIndicator 完成线的颜色
+                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(this, R.color.colorAccent))//设置 StepsViewIndicator 未完成线的颜色
+                .setStepViewComplectedTextColor(ContextCompat.getColor(this, R.color.darkorange))//设置 StepsView text 完成线的颜色
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(this, R.color.colorPrimary))//设置 StepsView text 未完成线的颜色
+                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(this, R.drawable.complted))//设置 StepsViewIndicator CompleteIcon
+                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(this, R.drawable.default_icon))//设置 StepsViewIndicator DefaultIcon
+                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(this, R.drawable.attention));//设置 StepsViewIndicator
+
     }
 
     private void openAlbum(int FLAG) {

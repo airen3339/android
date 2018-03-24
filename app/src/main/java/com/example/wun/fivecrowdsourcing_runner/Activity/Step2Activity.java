@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baoyachi.stepview.HorizontalStepView;
+import com.baoyachi.stepview.bean.StepBean;
 import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
 import com.example.wun.fivecrowdsourcing_runner.DataConfig;
 import com.example.wun.fivecrowdsourcing_runner.Presenter.Step2Presenter;
@@ -33,6 +35,8 @@ import com.example.wun.fivecrowdsourcing_runner.Utils.UploadUtil;
 import com.example.wun.fivecrowdsourcing_runner.View.Step2View;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Step2Activity extends AppCompatActivity implements Step2View {
     private TextView title;
@@ -40,10 +44,12 @@ public class Step2Activity extends AppCompatActivity implements Step2View {
     private ImageView idcardinhand;
     private Button clickidcardoppo;
     private Button clickidcardinhand;
-    private Button secondStep;
+
     private String idcardoppophoto;//身份证反面
     private String idcardinhandphoto;//身份证正面
+    private TextView nextStep;
     private Runner runner = new Runner();
+    List<StepBean> stepsBeanList = new ArrayList<>();
     Step2Presenter step2Presenter = new Step2Presenter(Step2Activity.this);
 
     private static final int CHOOSE_IDCARDOPPO = 1;
@@ -54,9 +60,21 @@ public class Step2Activity extends AppCompatActivity implements Step2View {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step2);
         runner = (Runner) getIntent().getSerializableExtra("runner");
+        initData();
         initView();
     }
 
+    private void initData() {
+        StepBean stepBean0 = new StepBean("基本信息",1);
+        StepBean stepBean1 = new StepBean("资质证书",0);
+        StepBean stepBean2 = new StepBean("身份信息",-1);
+        StepBean stepBean3 = new StepBean("已完成",-1);
+        stepsBeanList.add(stepBean0);
+        stepsBeanList.add(stepBean1);
+        stepsBeanList.add(stepBean2);
+        stepsBeanList.add(stepBean3);
+
+    }
     private void initView() {
         //获得商家信息
 
@@ -98,8 +116,9 @@ public class Step2Activity extends AppCompatActivity implements Step2View {
                 }
             }
         });
-        secondStep = findViewById(R.id.second_step);
-        secondStep.setOnClickListener(new View.OnClickListener() {
+        nextStep = findViewById(R.id.next_step);
+        nextStep.setText("下一步");
+        nextStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String requestURL = DataConfig.URL + DataConfig.UploadImage;
@@ -114,6 +133,18 @@ public class Step2Activity extends AppCompatActivity implements Step2View {
                 step2Presenter.sendImage(inhand.getName(), oppo.getName(), runner);
             }
         });
+        HorizontalStepView setpview = (HorizontalStepView) findViewById(R.id.step_view1);
+        setpview
+                .setStepViewTexts(stepsBeanList)//总步骤
+                .setTextSize(12)//set textSize
+                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(this, R.color.colorPrimary))//设置 StepsViewIndicator 完成线的颜色
+                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(this, R.color.colorAccent))//设置 StepsViewIndicator 未完成线的颜色
+                .setStepViewComplectedTextColor(ContextCompat.getColor(this, R.color.darkorange))//设置 StepsView text 完成线的颜色
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(this, R.color.colorPrimary))//设置 StepsView text 未完成线的颜色
+                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(this, R.drawable.complted))//设置 StepsViewIndicator CompleteIcon
+                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(this, R.drawable.default_icon))//设置 StepsViewIndicator DefaultIcon
+                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(this, R.drawable.attention));//设置 StepsViewIndicator
+
     }
 
     private void openAlbum(int FLAG) {
@@ -229,7 +260,7 @@ public class Step2Activity extends AppCompatActivity implements Step2View {
         vw = idcardoppo.getWidth();
         vh = idcardoppo.getHeight();//根据身份证尺寸计算
 
-        int scaleFactor = Math.min(iw / vw, ih / vh);//计算缩小比率
+        int scaleFactor = Math.max(iw / vw, ih / vh);//计算缩小比率
 
         option.inJustDecodeBounds = false;//关闭选项
         option.inSampleSize = scaleFactor;//设置缩小比率

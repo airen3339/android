@@ -6,10 +6,10 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +26,12 @@ import com.example.wun.fivecrowdsourcing_runner.R;
 import com.example.wun.fivecrowdsourcing_runner.View.JellyInterpolator;
 import com.example.wun.fivecrowdsourcing_runner.View.LoginView;
 
-import java.util.HashMap;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.Executors;
 
-import cn.smssdk.EventHandler;
-import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
+//import cn.smssdk.EventHandler;
+//import cn.smssdk.SMSSDK;
+//import cn.smssdk.gui.RegisterPage;
 
 //import com.example.wun.fivecrowdsourcing_runner.Activity.MainActivity;
 
@@ -42,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     private EditText phone;
     private EditText password;
     private View progress;
-
+    private TextView gotoRegister;
     private View mInputLayout;
 
     private float mWidth, mHeight;
@@ -61,26 +62,28 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     }
 
-    public void sendCode(Context context) {
-        RegisterPage page = new RegisterPage();
-        page.setRegisterCallback(new EventHandler() {
-            public void afterEvent(int event, int result, Object data) {
-                if (result == SMSSDK.RESULT_COMPLETE) {
-                    // 处理成功的结果
-                    HashMap<String,Object> phoneMap = (HashMap<String, Object>) data;
-                    String country = (String) phoneMap.get("country"); // 国家代码，如“86”
-                    String phone = (String) phoneMap.get("phone"); // 手机号码，如“13800138000”
-                    // TODO 利用国家代码和手机号码进行后续的操作
-                    Toast.makeText(context,country+' '+phone,Toast.LENGTH_SHORT).show();
-
-                } else{
-                    // TODO 处理错误的结果
-                    Toast.makeText(context,"none",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        page.show(context);
-    }
+    /**mob短信
+     */
+//    public void sendCode(Context context) {
+//        RegisterPage page = new RegisterPage();
+//        page.setRegisterCallback(new EventHandler() {
+//            public void afterEvent(int event, int result, Object data) {
+//                if (result == SMSSDK.RESULT_COMPLETE) {
+//                    // 处理成功的结果
+//                    HashMap<String,Object> phoneMap = (HashMap<String, Object>) data;
+//                    String country = (String) phoneMap.get("country"); // 国家代码，如“86”
+//                    String phone = (String) phoneMap.get("phone"); // 手机号码，如“13800138000”
+//                    // TODO 利用国家代码和手机号码进行后续的操作
+//                    Toast.makeText(context,country+' '+phone,Toast.LENGTH_SHORT).show();
+//
+//                } else{
+//                    // TODO 处理错误的结果
+//                    Toast.makeText(context,"none",Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//        page.show(context);
+//    }
     /**
      * 输入框的动画效果
      *
@@ -96,17 +99,13 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         AnimatorSet set = new AnimatorSet();
 
         ValueAnimator animator = ValueAnimator.ofFloat(0, w);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (Float) animation.getAnimatedValue();
-                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view
-                        .getLayoutParams();
-                params.leftMargin = (int) value;
-                params.rightMargin = (int) value;
-                view.setLayoutParams(params);
-            }
+        animator.addUpdateListener(animation -> {
+            float value = (Float) animation.getAnimatedValue();
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view
+                    .getLayoutParams();
+            params.leftMargin = (int) value;
+            params.rightMargin = (int) value;
+            view.setLayoutParams(params);
         });
 
         ObjectAnimator animator2 = ObjectAnimator.ofFloat(mInputLayout,
@@ -175,28 +174,48 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         login = findViewById(R.id.login);
         phone =  findViewById(R.id.phone);
         password =findViewById(R.id.password);
-        login.setOnClickListener(new View.OnClickListener() {
+
+        login.setOnClickListener(view -> {
+
+            /**输入不为空*/
+            if(TextUtils.isEmpty(phone.getText())||TextUtils.isEmpty(password.getText()))
+            {
+                Toast.makeText(this, "手机号或密码不能为空！", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 计算出控件的高与宽
+            mWidth = login.getMeasuredWidth();
+            mHeight = login.getMeasuredHeight();
+            // 隐藏输入框
+            mPhone.setVisibility(View.INVISIBLE);
+            mPsw.setVisibility(View.INVISIBLE);
+            /**隐藏按钮*/
+            login.setEnabled(false);
+            findViewById(R.id.main_title).setVisibility(View.INVISIBLE);
+            login.setText("正在登陆...");
+
+
+                inputAnimator(mInputLayout, mWidth, mHeight);
+            Executors.newSingleThreadExecutor().submit(() -> {
+                try {
+                    Thread.sleep(3000);//休眠3秒
+                    loginPresenter.Login(String.valueOf(phone.getText()), password.getText().toString(), URL);
+                } catch (Exception e) {
+                    if (e instanceof SocketTimeoutException)
+                    {
+                        Toast.makeText(this,"连接超时!",Toast.LENGTH_SHORT  ).show();
+                    }
+                    e.printStackTrace();
+                }
+            });
+        });
+        gotoRegister = findViewById(R.id.gotoRegister);
+        gotoRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 计算出控件的高与宽
-                mWidth = login.getMeasuredWidth();
-                mHeight = login.getMeasuredHeight();
-                // 隐藏输入框
-                mPhone.setVisibility(View.INVISIBLE);
-                mPsw.setVisibility(View.INVISIBLE);
-                inputAnimator(mInputLayout, mWidth, mHeight);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(2000);//休眠3秒
-                            loginPresenter.Login(String.valueOf(phone.getText()),password.getText().toString(),URL);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                }).start();
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -222,6 +241,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         mInputLayout.setVisibility(View.VISIBLE);
         mPhone.setVisibility(View.VISIBLE);
         mPsw.setVisibility(View.VISIBLE);
+        login.setEnabled(true);
+        login.setText("登录");
+        findViewById(R.id.main_title).setVisibility(View.VISIBLE);
 
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mInputLayout.getLayoutParams();
         params.leftMargin = 0;

@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
-// 添加插件
-apply plugin: 'com.mob.sdk'
+//// 添加插件
+//apply plugin: 'com.mob.sdk'
 
 // 在MobSDK的扩展中注册SMSSDK的相关信息
-MobSDK {
-    appKey "24c2aa5ab92b2"
-    appSecret "92c3a53e25b4b68bdafd0563054044fb"
-
-    SMSSDK {}
-    PaySDK {}
-}
+//MobSDK {
+//    appKey "24c2aa5ab92b2"
+//    appSecret "92c3a53e25b4b68bdafd0563054044fb"
+//
+//    SMSSDK {}
+//    PaySDK {}
+//}
 
 android {
     compileSdkVersion 26
@@ -52,5 +52,6 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.githang:status-bar-compat:latest.integration'
+    compile 'com.github.baoyachi:StepView:1.9'
     compile fileTree(include: ['*.jar'], dir: 'libs')
 }
