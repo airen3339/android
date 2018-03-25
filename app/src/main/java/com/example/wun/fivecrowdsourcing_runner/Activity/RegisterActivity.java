@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.wun.fivecrowdsourcing_runner.DataConfig;
 import com.example.wun.fivecrowdsourcing_runner.R;
@@ -44,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -91,7 +93,9 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView 
 
     @Override
     public void onSuccess() {
+        Toast.makeText(this,"注册成功！",Toast.LENGTH_SHORT);
         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 }

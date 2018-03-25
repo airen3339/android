@@ -215,6 +215,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
@@ -225,6 +227,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         Log.v("runner phone",runner.getPhone());
         intent.putExtra("runner",runner);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
@@ -232,8 +235,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @Override
     public void onFailed() {
-
+        Toast.makeText(this,"登录失败！",Toast.LENGTH_SHORT);
         Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
         //intent.putExtra("runner",runner);
         startActivity(intent);
 
