@@ -9,7 +9,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,8 @@ import com.example.wun.fivecrowdsourcing_runner.View.LoginView;
 
 import java.net.SocketTimeoutException;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //import cn.smssdk.EventHandler;
 //import cn.smssdk.SMSSDK;
@@ -177,12 +178,6 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
         login.setOnClickListener(view -> {
 
-            /**输入不为空*/
-            if(TextUtils.isEmpty(phone.getText())||TextUtils.isEmpty(password.getText()))
-            {
-                Toast.makeText(this, "手机号或密码不能为空！", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             // 计算出控件的高与宽
             mWidth = login.getMeasuredWidth();
@@ -197,18 +192,20 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
 
                 inputAnimator(mInputLayout, mWidth, mHeight);
-            Executors.newSingleThreadExecutor().submit(() -> {
-                try {
-                    Thread.sleep(3000);//休眠3秒
-                    loginPresenter.Login(String.valueOf(phone.getText()), password.getText().toString(), URL);
-                } catch (Exception e) {
-                    if (e instanceof SocketTimeoutException)
-                    {
-                        Toast.makeText(this,"连接超时!",Toast.LENGTH_SHORT  ).show();
+            boolean result = validate(phone.getText().toString(), password.getText().toString());
+            if (result) {
+                Executors.newSingleThreadExecutor().submit(() -> {
+                    try {
+                        Thread.sleep(3000);//休眠3秒
+                        loginPresenter.Login(String.valueOf(phone.getText()), password.getText().toString(), URL);
+                    } catch (Exception e) {
+                        if (e instanceof SocketTimeoutException) {
+                            Toast.makeText(this, "连接超时!", Toast.LENGTH_SHORT).show();
+                        }
+                        e.printStackTrace();
                     }
-                    e.printStackTrace();
-                }
-            });
+                });
+            }
         });
         gotoRegister = findViewById(R.id.gotoRegister);
         gotoRegister.setOnClickListener(new View.OnClickListener() {
@@ -220,6 +217,27 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                 startActivity(intent);
             }
         });
+    }
+
+    private boolean validate(String s, String s1) {
+        /**
+         * 移动号段正则表达式
+         */
+        String pat1 = "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$";
+        Pattern pattern1 = Pattern.compile(pat1);
+        Matcher match1 = pattern1.matcher(s);
+        boolean isMatch1 = match1.matches();
+        if(s.length()!= 11||!isMatch1)
+        {
+            phone.setError("请输入有效的手机号码!");
+            return false;
+        }
+        if (s1.equals("")) {
+            password.setError("密码不能为空!");
+            return false;
+        }
+
+        return true;
     }
 
     @Override

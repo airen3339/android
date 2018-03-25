@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.wun.fivecrowdsourcing_runner.Adapter.MyFragmentAdapter;
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity
     private TextView phone;
     private TextView name;
     private TextView title;
-
+    private ImageView imageView;
     private TabLayout mTab;
     private ViewPager mViewPager;
     public static final int TAB_LONG_COUNT=9;
@@ -117,8 +118,19 @@ public class MainActivity extends AppCompatActivity
         View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_main);
         name=(TextView)headerLayout.findViewById(R.id.name);
         phone=(TextView)headerLayout.findViewById(R.id.phone);
+        imageView=(ImageView)headerLayout.findViewById(R.id.imageView);
         name.setText(runner.getName());
         phone.setText(runner.getPhone());
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(MainActivity.this, UserCenterActivity.class);
+                intent.putExtra("runner",runner);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -166,9 +178,17 @@ public class MainActivity extends AppCompatActivity
             // Handle the camera action
             Intent intent=new Intent(MainActivity.this, RunnerInfoActivity.class);
             intent.putExtra("runner",runner);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-        } else if (id == R.id.nav_gallery) {
 
+        } else if (id == R.id.nav_gallery) {
+        }else if(id == R.id.user_center){
+            Intent intent=new Intent(MainActivity.this, RunnerInfoActivity.class);
+            intent.putExtra("runner",runner);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

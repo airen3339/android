@@ -11,6 +11,9 @@ import com.example.wun.fivecrowdsourcing_runner.View.LoginView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -35,7 +38,7 @@ public class LoginPresenter {
     }
 
 
-    public void Login(String phone,String password,String url){
+    public void Login(String phone,String password,String url)throws Exception{
 //        //特殊通道，当服务器不行时直接登陆
         if(DataConfig.debugFlag==true) {
             Long lng=Long.parseLong("11");
@@ -50,14 +53,25 @@ public class LoginPresenter {
        Log.v("servlet",servletIP);
        Log.v("phone",phone);
         Log.v("ppassword",password);
-      sendRequestWithOkHttp(servletIP,phone,password);
+        try {
+            sendRequestWithOkHttp(servletIP,phone,password);
+        } catch ( SocketTimeoutException e) {
+            e.printStackTrace();
+            throw new SocketTimeoutException();
+        }
     }
 
-    private void sendRequestWithOkHttp(final String servletIP, final String phone,final String password) {
+    private void sendRequestWithOkHttp(final String servletIP, final String phone,final String password) throws Exception {
         try {
             RequestBody requestBody = new FormBody.Builder().
                     add("phone", phone).add("password", password).build();
-            OkHttpClient client = new OkHttpClient();
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)//设置写的超时时间
+                    .build();
+
             Request request = new Request.Builder().
                     url(servletIP).
                     post(requestBody).
@@ -67,8 +81,12 @@ public class LoginPresenter {
             jsonData = response.body().string().toString();
             Log.v("jsonData",jsonData);
             parseJSONWithJONObject(jsonData);
-        } catch (Exception e) {
+        } catch ( SocketTimeoutException e) {
             e.printStackTrace();
+            if(e instanceof  SocketTimeoutException ) {
+                throw new SocketTimeoutException();
+            }
+
         }
     }
 

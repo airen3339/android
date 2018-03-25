@@ -24,7 +24,7 @@ public class Runner implements Serializable {
     private double laititude;//纬度
     private double longtitude;//经度
     private String token;//登陆码，待以后用
-
+    private String status;// 审核状态:0:新注册 1：待审核 2：审核通过
     //private String IdCardPhoto;//联系人身份证照片存储地址
 
 
@@ -181,5 +181,13 @@ public class Runner implements Serializable {
 
     public void setLongtitude(double longtitude) {
         this.longtitude = longtitude;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

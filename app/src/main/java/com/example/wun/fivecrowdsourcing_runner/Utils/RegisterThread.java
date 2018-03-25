@@ -1,6 +1,8 @@
 package com.example.wun.fivecrowdsourcing_runner.Utils;
 
 
+import android.util.Log;
+
 import com.example.wun.fivecrowdsourcing_runner.View.RegisterView;
 
 import java.io.BufferedReader;
@@ -48,7 +50,9 @@ public class RegisterThread extends Thread {
             while((str=reader.readLine())!=null)
             {
                 sb.append(str);
+
             }
+            Log.v("register",sb.toString());
             return sb.toString();
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
