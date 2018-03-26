@@ -87,6 +87,7 @@
         </activity>
         <activity android:name=".Activity.RegisterActivity" />
         <activity android:name=".Activity.UserCenterActivity" />
+        <activity android:name=".Activity.WebviewActivity" />
     </application>
 
 </manifest>

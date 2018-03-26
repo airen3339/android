@@ -35,8 +35,8 @@ public class Step3Presenter {
     public void sendImage( String idcardnumber, Runner runner,String filename) {
         this.runner = runner;
         //runner.setName(name);
-        runner.setIdCardNumber(idcardnumber);
-        runner.setPhotoOfHealCert("images" + "\\" + runner.getRunnerId() + "\\" + filename);
+        runner.setIdcardnumber(idcardnumber);
+        runner.setPhotoofhealcert(".."+ "\\" +".."+ "\\" +"runnerImages" + "\\" + runner.getRunnerid() + "\\" + filename);
         servletIP=URL+DataConfig.RunnerInfoServlet;
         sendRequestWithOkHttp(this.runner,servletIP);
     }

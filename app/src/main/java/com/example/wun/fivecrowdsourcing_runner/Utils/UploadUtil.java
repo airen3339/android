@@ -38,7 +38,7 @@ public class UploadUtil {
             @Override
             public void run() {
                 try {
-                    String runnerRequestURL = RequestURL + "?runnerId=" + runner.getRunnerId();
+                    String runnerRequestURL = RequestURL + "?runnerId=" + runner.getRunnerid();
                     Log.v("uploadFile RequestURL",runnerRequestURL);
                     URL url = new URL(runnerRequestURL );
                     Log.v("uploadFile URL",url.toString());

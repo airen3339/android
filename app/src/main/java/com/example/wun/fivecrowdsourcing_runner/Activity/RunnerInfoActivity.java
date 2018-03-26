@@ -24,12 +24,8 @@ public class RunnerInfoActivity extends AppCompatActivity implements RunnerInfoV
     private TextView title;
     private EditText name;
     private  EditText phone;;
-    //private  EditText typeofgood;
-   // private  TextView address;
-   // private String addressname;
     private Button firststep;
     private TextView nextStep;
-  // private  AddressInfo addressInfo;
     private Runner runner = new Runner();
     List<StepBean> stepsBeanList = new ArrayList<>();
     RunnerInfoPresenter runnerInfoPresenter =new RunnerInfoPresenter(this);

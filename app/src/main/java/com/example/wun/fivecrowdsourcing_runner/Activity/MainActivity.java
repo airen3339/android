@@ -23,6 +23,7 @@ import com.example.wun.fivecrowdsourcing_runner.Bean.OrderBean;
 import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
 import com.example.wun.fivecrowdsourcing_runner.Fragment.CompletedFragment;
 import com.example.wun.fivecrowdsourcing_runner.Fragment.DeliveryFragment;
+import com.example.wun.fivecrowdsourcing_runner.Fragment.EnterFragment;
 import com.example.wun.fivecrowdsourcing_runner.Fragment.PendingGoodFragment;
 import com.example.wun.fivecrowdsourcing_runner.Fragment.TBDFragment;
 import com.example.wun.fivecrowdsourcing_runner.R;
@@ -56,15 +57,37 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         runner= (Runner) getIntent().getSerializableExtra("runner");
         mFragments = new ArrayList<>();
-        mFragments.add(new TBDFragment(runner));
-        mFragments.add(new PendingGoodFragment(runner));
-        mFragments.add(new DeliveryFragment(runner));
-        mFragments.add(new CompletedFragment(runner));
+        //跑腿人入驻状态
+        judgeStatus();
         //mFragments = new ArrayList<>();
         bindView();
 
     }
 
+    private void judgeStatus() {
+        switch (runner.getStatus()) {
+            case "0":
+                mFragments.add(new EnterFragment(runner));
+                mFragments.add(new EnterFragment(runner));
+                mFragments.add(new EnterFragment(runner));
+                mFragments.add(new EnterFragment(runner));
+                break;
+            case "1":
+                mFragments.add(new EnterFragment(runner));
+                mFragments.add(new EnterFragment(runner));
+                mFragments.add(new EnterFragment(runner));
+                mFragments.add(new EnterFragment(runner));
+                break;
+            case "2":
+                mFragments.add(new TBDFragment(runner));
+                mFragments.add(new PendingGoodFragment(runner));
+                mFragments.add(new DeliveryFragment(runner));
+                mFragments.add(new CompletedFragment(runner));
+                break;
+            default:
+                break;
+        }
+    }
 
 
     @Override
@@ -84,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         MyFragmentAdapter adapter = new MyFragmentAdapter(getSupportFragmentManager(), mFragments, modules);
         mTab = (TabLayout) findViewById(R.id.tab_layout);
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(adapter);
         mTab.setupWithViewPager(mViewPager);
         mTab.setTabMode(TabLayout.MODE_FIXED);//设置tab模式，当前为系统默认模式
@@ -182,22 +205,25 @@ public class MainActivity extends AppCompatActivity
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
 
-        } else if (id == R.id.nav_gallery) {
-        }else if(id == R.id.user_center){
+        } else if (id == R.id.rule) {
+            Intent intent=new Intent(MainActivity.this, WebviewActivity.class);
+            // intent.putExtra("merchant",merchant);
+            startActivity(intent);
+        }
+        else if(id == R.id.user_center){
             Intent intent=new Intent(MainActivity.this, RunnerInfoActivity.class);
             intent.putExtra("runner",runner);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
+//        } else if (id == R.id.nav_manage) {
+//
+//        } else if (id == R.id.nav_share) {
+//
+//        } else if (id == R.id.nav_send) {
+//
+//        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

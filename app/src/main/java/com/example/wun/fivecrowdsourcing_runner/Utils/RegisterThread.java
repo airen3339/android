@@ -66,7 +66,7 @@ public class RegisterThread extends Thread {
     @Override
     public void run() {
         try {
-          String result =doGet();
+        String result =(doGet());
           if(result.equals("success")){
               registerView.onSuccess();
           }

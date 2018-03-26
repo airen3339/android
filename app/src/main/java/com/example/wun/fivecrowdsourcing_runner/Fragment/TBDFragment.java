@@ -9,6 +9,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +35,8 @@ import com.example.wun.fivecrowdsourcing_runner.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @SuppressLint("ValidFragment")
 public class TBDFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
@@ -85,6 +88,7 @@ public class TBDFragment extends Fragment implements SwipeRefreshLayout.OnRefres
     private void requestLocation() {
         initLocation();
         mLocationClient.start();
+
     }
 
     private void initLocation() {
@@ -101,7 +105,8 @@ public class TBDFragment extends Fragment implements SwipeRefreshLayout.OnRefres
         View view = inflater.inflate(R.layout.fragment_order_item, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_Layout);
-
+        mRefreshLayout .setColorSchemeResources(new int[]{R.color.colorAccent, R.color.colorPrimary});
+        mRefreshLayout .setOnRefreshListener(this);
         return view;
     }
 
@@ -115,7 +120,7 @@ public class TBDFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 //            }
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             mRecyclerView.setLayoutManager(layoutManager);
-            TBDAdpater adpater = new TBDAdpater(deliveryOrderList);
+            TBDAdpater adpater = new TBDAdpater(deliveryOrderList,runner,this);
             mRecyclerView.setAdapter(adpater);
         });
 
@@ -123,6 +128,14 @@ public class TBDFragment extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tbdPresenter.dispalyInitOrder(runner);
+                // 加载完数据设置为不刷新状态，将下拉进度收起来
+                mRefreshLayout.setRefreshing(false);
+            }
+        }, 2000);
 
     }
 

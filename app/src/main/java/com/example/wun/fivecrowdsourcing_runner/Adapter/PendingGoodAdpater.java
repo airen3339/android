@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.wun.fivecrowdsourcing_runner.Bean.OrderBean;
+import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
+import com.example.wun.fivecrowdsourcing_runner.Fragment.PendingGoodFragment;
+import com.example.wun.fivecrowdsourcing_runner.Presenter.PendingGoodPresenter;
 import com.example.wun.fivecrowdsourcing_runner.R;
 
 import java.util.List;
@@ -17,9 +20,13 @@ import java.util.List;
 
 public class PendingGoodAdpater extends RecyclerView.Adapter<PendingGoodAdpater.ViewHolder>{
     private List<OrderBean> orderList;
-
-    public PendingGoodAdpater(List<OrderBean> orderList) {
+    private PendingGoodFragment pendingGoodFragment;
+    private PendingGoodPresenter pendingGoodPresenter=new PendingGoodPresenter();
+    private Runner runner;
+    public PendingGoodAdpater(List<OrderBean> orderList, Runner runner, PendingGoodFragment pendingGoodFragment) {
         this.orderList = orderList;
+        this.pendingGoodFragment = pendingGoodFragment;
+        this.runner = runner;
     }
 
     @Override
@@ -37,7 +44,13 @@ public class PendingGoodAdpater extends RecyclerView.Adapter<PendingGoodAdpater.
         holder.cusAddress.setText(deliveryOrder.getCusAddress());
         holder.estimatedTime.setText(deliveryOrder.getEstimatedtime()+"分钟");
         holder.estimatedPrice.setText(deliveryOrder.getEstimatedtotalprice()+"元");
-        holder.getOrder.setText("待取货");
+        holder.getOrder.setText("取货");
+        holder.getOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pendingGoodPresenter.getGood(deliveryOrder,runner,pendingGoodFragment);
+            }
+        });
     }
 
     @Override

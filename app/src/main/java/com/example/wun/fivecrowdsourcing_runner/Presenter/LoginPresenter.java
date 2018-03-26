@@ -40,15 +40,15 @@ public class LoginPresenter {
 
     public void Login(String phone,String password,String url)throws Exception{
 //        //特殊通道，当服务器不行时直接登陆
-        if(DataConfig.debugFlag==true) {
-            Long lng=Long.parseLong("11");
-            runner.setName("wch");
-            runner.setPhone("177740");
-            runner.setRunnerId(lng);
-
-            loginView.onSuccess(runner);
-
-        }
+//        if(DataConfig.debugFlag==true) {
+//            Long lng=Long.parseLong("11");
+//            runner.setName("wch");
+//            runner.setPhone("177740");
+//            runner.setRunnerId(lng);
+//
+//            loginView.onSuccess(runner);
+//
+//        }
        servletIP=url+servletName;
        Log.v("servlet",servletIP);
        Log.v("phone",phone);
@@ -97,11 +97,14 @@ public class LoginPresenter {
             result=jsonObject.getString("result");
             Log.v("result",result);
             if(result.equals("success")){
-                runner.setPhone(jsonObject .getString("phone"));
-                runner.setName(jsonObject . getString("name"));
-               // runner.setRunnerId(jsonObject.getLong("merchantid"));//这里用的商家的登录，所以名称未改
-                runner.setRunnerId(jsonObject.getLong("runnerid"));
-                Log.v("login return runnerid",runner.getRunnerId().toString());
+                runner.setPhone(jsonObject.getString("phone"));
+                runner.setRunnerid(jsonObject.getLong("runnerid"));
+                runner.setStatus(jsonObject.getString("status"));
+                if (!jsonObject.getString("status").equals("0")) {
+                    runner.setName(jsonObject.getString("name"));
+                    runner.setBalance(jsonObject.getDouble("balance"));
+                    runner.setIntegral(jsonObject.getInt("integral"));
+                }
                 loginView.onSuccess(runner);
             }else
                 loginView.onFailed();

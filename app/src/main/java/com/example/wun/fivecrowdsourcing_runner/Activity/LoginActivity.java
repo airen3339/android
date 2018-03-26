@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +39,9 @@ import java.util.regex.Pattern;
 
 
 public class LoginActivity extends AppCompatActivity implements LoginView {
-    public static String  URL=  DataConfig.URL;
+    public static String URL = DataConfig.URL;
     private TextView login;
-    private LoginPresenter loginPresenter=new LoginPresenter(this);
+    private LoginPresenter loginPresenter = new LoginPresenter(this);
     private EditText phone;
     private EditText password;
     private View progress;
@@ -50,17 +51,16 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     private float mWidth, mHeight;
 
     private LinearLayout mPhone, mPsw;
+
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
 //        MobSDK.init(this);
 //        sendCode(getApplicationContext());
         initView();
-
-
-
     }
 
     /**mob短信
@@ -85,15 +85,13 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 //        });
 //        page.show(context);
 //    }
+
     /**
      * 输入框的动画效果
      *
-     * @param view
-     *            控件
-     * @param w
-     *            宽
-     * @param h
-     *            高
+     * @param view 控件
+     * @param w    宽
+     * @param h    高
      */
     private void inputAnimator(final View view, float w, float h) {
 
@@ -165,20 +163,22 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
 
-
     private void initView() {
 
         progress = findViewById(R.id.layout_progress);
-        mInputLayout =findViewById(R.id.input_layout);
-        mPhone= findViewById(R.id.input_layout_phone);
-        mPsw= findViewById(R.id.input_layout_psw);
+        mInputLayout = findViewById(R.id.input_layout);
+        mPhone = findViewById(R.id.input_layout_phone);
+        mPsw = findViewById(R.id.input_layout_psw);
         login = findViewById(R.id.login);
-        phone =  findViewById(R.id.phone);
-        password =findViewById(R.id.password);
+        phone = findViewById(R.id.phone);
+        password = findViewById(R.id.password);
 
         login.setOnClickListener(view -> {
-
-
+            /**输入不为空*/
+            if (TextUtils.isEmpty(phone.getText()) || TextUtils.isEmpty(password.getText())) {
+                Toast.makeText(this, "手机号或密码不能为空！", Toast.LENGTH_SHORT).show();
+                return;
+            }
             // 计算出控件的高与宽
             mWidth = login.getMeasuredWidth();
             mHeight = login.getMeasuredHeight();
@@ -189,23 +189,39 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             login.setEnabled(false);
             findViewById(R.id.main_title).setVisibility(View.INVISIBLE);
             login.setText("正在登陆...");
-
-
-                inputAnimator(mInputLayout, mWidth, mHeight);
-            boolean result = validate(phone.getText().toString(), password.getText().toString());
-            if (result) {
-                Executors.newSingleThreadExecutor().submit(() -> {
-                    try {
-                        Thread.sleep(3000);//休眠3秒
-                        loginPresenter.Login(String.valueOf(phone.getText()), password.getText().toString(), URL);
-                    } catch (Exception e) {
-                        if (e instanceof SocketTimeoutException) {
+            inputAnimator(mInputLayout, mWidth, mHeight);
+            Executors.newSingleThreadExecutor().submit(() -> {
+                try {
+                    Thread.sleep(3000);//休眠3秒
+                    loginPresenter.Login(String.valueOf(phone.getText()), password.getText().toString(), URL);
+                } catch (Exception e) {
+                    if (e instanceof SocketTimeoutException) {
+                        runOnUiThread(() -> {
                             Toast.makeText(this, "连接超时!", Toast.LENGTH_SHORT).show();
-                        }
-                        e.printStackTrace();
+                            progress.setVisibility(View.GONE);
+                            mInputLayout.setVisibility(View.VISIBLE);
+                            mPhone.setVisibility(View.VISIBLE);
+                            mPsw.setVisibility(View.VISIBLE);
+                            login.setEnabled(true);
+                            login.setText("登录");
+                            findViewById(R.id.main_title).setVisibility(View.VISIBLE);
+
+                            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mInputLayout.getLayoutParams();
+                            params.leftMargin = 0;
+                            params.rightMargin = 0;
+                            mInputLayout.setLayoutParams(params);
+
+
+                            ObjectAnimator animator2 = ObjectAnimator.ofFloat(mInputLayout, "scaleX", 0.5f, 1f);
+                            animator2.setDuration(500);
+                            animator2.setInterpolator(new AccelerateDecelerateInterpolator());
+                            animator2.start();
+                        });
                     }
-                });
-            }
+                    e.printStackTrace();
+                }
+            });
+
         });
         gotoRegister = findViewById(R.id.gotoRegister);
         gotoRegister.setOnClickListener(new View.OnClickListener() {
@@ -227,8 +243,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         Pattern pattern1 = Pattern.compile(pat1);
         Matcher match1 = pattern1.matcher(s);
         boolean isMatch1 = match1.matches();
-        if(s.length()!= 11||!isMatch1)
-        {
+        if (s.length() != 11 || !isMatch1) {
             phone.setError("请输入有效的手机号码!");
             return false;
         }
@@ -243,41 +258,36 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     public void onSuccess(Runner runner) {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        Log.v("runner phone",runner.getPhone());
-        intent.putExtra("runner",runner);
+        Log.v("runner phone", runner.getPhone());
+        intent.putExtra("runner", runner);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
 
-
     @Override
     public void onFailed() {
-        Toast.makeText(this,"登录失败！",Toast.LENGTH_SHORT);
-        Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        runOnUiThread(() -> {
+            Toast.makeText(this, "登录失败！", Toast.LENGTH_SHORT).show();
 
-        //intent.putExtra("runner",runner);
-        startActivity(intent);
+            progress.setVisibility(View.GONE);
+            mInputLayout.setVisibility(View.VISIBLE);
+            mPhone.setVisibility(View.VISIBLE);
+            mPsw.setVisibility(View.VISIBLE);
+            login.setEnabled(true);
+            login.setText("登录");
+            findViewById(R.id.main_title).setVisibility(View.VISIBLE);
 
-        progress.setVisibility(View.GONE);
-        mInputLayout.setVisibility(View.VISIBLE);
-        mPhone.setVisibility(View.VISIBLE);
-        mPsw.setVisibility(View.VISIBLE);
-        login.setEnabled(true);
-        login.setText("登录");
-        findViewById(R.id.main_title).setVisibility(View.VISIBLE);
-
-        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mInputLayout.getLayoutParams();
-        params.leftMargin = 0;
-        params.rightMargin = 0;
-        mInputLayout.setLayoutParams(params);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mInputLayout.getLayoutParams();
+            params.leftMargin = 0;
+            params.rightMargin = 0;
+            mInputLayout.setLayoutParams(params);
 
 
-        ObjectAnimator animator2 = ObjectAnimator.ofFloat(mInputLayout, "scaleX", 0.5f, 1f);
-        animator2.setDuration(500);
-        animator2.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator2.start();
-            }
-
+            ObjectAnimator animator2 = ObjectAnimator.ofFloat(mInputLayout, "scaleX", 0.5f, 1f);
+            animator2.setDuration(500);
+            animator2.setInterpolator(new AccelerateDecelerateInterpolator());
+            animator2.start();
+        });
+    }
 }

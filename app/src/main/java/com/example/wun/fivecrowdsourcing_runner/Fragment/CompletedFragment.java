@@ -2,6 +2,7 @@ package com.example.wun.fivecrowdsourcing_runner.Fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -24,7 +25,7 @@ import java.util.List;
  * Created by WUN on 2018/3/8.
  */
 @SuppressLint("ValidFragment")
-public class CompletedFragment extends Fragment{
+public class CompletedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     protected SwipeRefreshLayout mRefreshLayout;
     protected RecyclerView mRecyclerView;
     private Runner runner;
@@ -45,7 +46,10 @@ public class CompletedFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_completed_order, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view_completed);
         mRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_Layout_completed);
+        mRefreshLayout .setColorSchemeResources(new int[]{R.color.colorAccent, R.color.colorPrimary});
+        mRefreshLayout .setOnRefreshListener(this);
         completedPresenter.displayInitOrder(runner);
+
         return view;
     }
 
@@ -56,5 +60,17 @@ public class CompletedFragment extends Fragment{
             CompletetdAdpater adpater = new CompletetdAdpater(list);
             mRecyclerView.setAdapter(adpater);
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                completedPresenter.displayInitOrder(runner);
+                // 加载完数据设置为不刷来
+                mRefreshLayout.setRefreshing(false);
+            }
+        }, 2000);
     }
 }

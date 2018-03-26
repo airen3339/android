@@ -26,7 +26,8 @@
                 stv:sLeftTextString="帐号管理"
                 stv:sRightIconRes="@mipmap/arrow_right_red"
                 stv:sLeftViewGravity="left_center"
-                stv:sRightTextString="未认证,点击认证"/>
+                stv:sRightTextString="点击认证"
+                stv:sRightTextSize="12dp"/>
 
             <com.allen.library.SuperTextView
                 android:layout_width="match_parent"
@@ -46,21 +47,23 @@
 
                 stv:sLeftTopTextString="准时送达率"
                 stv:sLeftTopTextColor="@color/colorPrimary"
-                stv:sRightBottomTextString="暂无"
+                stv:sRightBottomTextString="100"
 
 
                 stv:sRightTextColor="@color/colorAccent"
 
-                stv:sRightTopTextString="商家评价"
+                stv:sRightTopTextString="信用分"
                 stv:sRightTopTextColor="@color/colorPrimary"/>
 
             <com.allen.library.SuperTextView
+                android:id="@+id/my_wallet"
                 android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 stv:sLeftIconRes="@mipmap/yuan_48px"
                 stv:sLeftTextString="我的钱包"
-                stv:sRightTopTextString="查看"
+                stv:sRightTextString="查看"
+                stv:sRightTextSize="12dp"
                 stv:sRightIconRes="@mipmap/arrow_right_red" />
 
             <com.allen.library.SuperTextView
@@ -78,6 +81,7 @@
                 android:layout_width="match_parent"
                 stv:sLeftTextString="账号与安全"
                 stv:sRightTextString="已保护"
+                stv:sRightTextSize="12dp"
                 stv:sRightIconRes="@mipmap/arrow_right_red"
                 stv:sRightTvDrawableLeft="@mipmap/v1"
                 android:layout_height="50dp" />

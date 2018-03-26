@@ -27,8 +27,8 @@ public class Step2Presenter {
     public void sendImage(String inhand,String oppo,  Runner runner) {
         this.runner = runner;
         //this.runner.setPhotoOfHealCert("images" + "\\" + runner.getRunnerId() + "\\" + healcertphoto);
-        this.runner.setPhotoOfIdCardInhand("images" + "\\" + runner.getRunnerId() + "\\" + inhand);
-        this.runner.setPhotoOfIdCardOppo("images" + "\\" + runner.getRunnerId()+"\\"+oppo);
+        this.runner.setPhotoofidcardposi(".."+ "\\" +".."+ "\\" +"runnerImages" + "\\" + runner.getRunnerid() + "\\" + inhand);
+        this.runner.setPhotoofidcardoppo(".."+ "\\" +".."+ "\\" +"runnerImages" + "\\" + runner.getRunnerid()+"\\"+oppo);
         step2View.finishStep2(runner);
     }
 }

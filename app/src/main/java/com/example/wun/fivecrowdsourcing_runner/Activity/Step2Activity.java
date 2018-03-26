@@ -42,8 +42,8 @@ public class Step2Activity extends AppCompatActivity implements Step2View {
     private TextView title;
     private ImageView idcardoppo;
     private ImageView idcardinhand;
-    private Button clickidcardoppo;
-    private Button clickidcardinhand;
+    private Button clickidcardoppo;//身份证反面
+    private Button clickidcardinhand;//身份证正面
 
     private String idcardoppophoto;//身份证反面
     private String idcardinhandphoto;//身份证正面
@@ -79,7 +79,7 @@ public class Step2Activity extends AppCompatActivity implements Step2View {
         //获得商家信息
 
         Log.v("step2 runner name",runner.getName());
-        Log.v("step2 runner id",runner.getRunnerId().toString());
+        Log.v("step2 runner id",runner.getRunnerid().toString());
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         title=findViewById(R.id.title);

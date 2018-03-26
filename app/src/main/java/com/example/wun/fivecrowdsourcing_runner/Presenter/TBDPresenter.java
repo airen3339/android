@@ -1,5 +1,7 @@
 package com.example.wun.fivecrowdsourcing_runner.Presenter;
 
+import android.util.Log;
+
 import com.example.wun.fivecrowdsourcing_runner.Bean.OrderBean;
 import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
 import com.example.wun.fivecrowdsourcing_runner.DataConfig;
@@ -25,10 +27,14 @@ public class TBDPresenter {
     public static String  URL=  DataConfig.URL;
     private String initservletName=DataConfig.RunnerGetOrder;
     private String servletIP;
+    private String jsonData;
     private List<OrderBean> list = new ArrayList<OrderBean>();
     private TBDFragment tbdFragment;
     public TBDPresenter(TBDFragment tbdFragment) {
         this.tbdFragment = tbdFragment;
+    }
+
+    public TBDPresenter() {
     }
 
     public void dispalyInitOrder(Runner runner) {
@@ -72,5 +78,37 @@ public class TBDPresenter {
         }
 
         tbdFragment.dispalyOrder(list);
+    }
+
+    public void grap(OrderBean deliveryOrder, Runner runner, TBDFragment tbdFragment) {
+        this.tbdFragment = tbdFragment;
+        String servletName = "GrapOrderServlet";
+        servletIP=URL+servletName ;
+        sendRequestWithOkHttp(servletIP,runner,deliveryOrder);
+    }
+
+    //发送订单号和runnerId
+    private void sendRequestWithOkHttp(String servletIP, Runner runner, OrderBean deliveryOrder) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    RequestBody requestBody = new FormBody.Builder().
+                            add("delorderid", String.valueOf(deliveryOrder.getDelorderid())).add("runnerid", String.valueOf(runner.getRunnerid())).build();
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder().
+                            url(servletIP).
+                            post(requestBody).
+                            build();
+                    Log.v("request",request.toString());
+                    Response response = client.newCall(request).execute();
+                    jsonData = response.body().string().toString();
+                    Log.v("jsonData",jsonData);
+                    parseJSONWithJONObject(jsonData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }

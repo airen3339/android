@@ -1,5 +1,7 @@
 package com.example.wun.fivecrowdsourcing_runner.Presenter;
 
+import android.util.Log;
+
 import com.example.wun.fivecrowdsourcing_runner.Bean.OrderBean;
 import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
 import com.example.wun.fivecrowdsourcing_runner.DataConfig;
@@ -26,10 +28,15 @@ public class PendingGoodPresenter {
     private PendingGoodFragment pendingGoodFragment;
     private String initservletName = DataConfig.PENDING_INIT;
     private List<OrderBean> list = new ArrayList<OrderBean>();
+    private String jsonData;
     private String servletIP;
 
     public PendingGoodPresenter(PendingGoodFragment pendingGoodFragment) {
         this.pendingGoodFragment = pendingGoodFragment;
+    }
+
+    public PendingGoodPresenter() {
+
     }
 
     public void dispalyInitOrder(Runner runner) {
@@ -67,7 +74,41 @@ public class PendingGoodPresenter {
 
     private void parseJSONWithJONObject(String jsonData) {
         Gson gson = new Gson();
-        list= gson.fromJson( jsonData, new TypeToken<List<OrderBean>>(){}.getType());
+        try {
+            list= gson.fromJson( jsonData, new TypeToken<List<OrderBean>>(){}.getType());
+        } catch (Exception e) {
+        }
        pendingGoodFragment.dispalyOrder(list);
+    }
+
+    public void getGood(OrderBean deliveryOrder, Runner runner, PendingGoodFragment pendingGoodFragment) {
+        this.pendingGoodFragment = pendingGoodFragment;
+        String servletName = "GetGoodServlet";
+        servletIP=URL+servletName ;
+        sendRequestWithOkHttp(servletIP,runner,deliveryOrder);
+    }
+
+    private void sendRequestWithOkHttp(String servletIP, Runner runner, OrderBean deliveryOrder) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    RequestBody requestBody = new FormBody.Builder().
+                            add("delorderid", String.valueOf(deliveryOrder.getDelorderid())).add("runnerid", String.valueOf(runner.getRunnerid())).build();
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder().
+                            url(servletIP).
+                            post(requestBody).
+                            build();
+                    Log.v("request",request.toString());
+                    Response response = client.newCall(request).execute();
+                    jsonData = response.body().string().toString();
+                    Log.v("jsonData",jsonData);
+                    parseJSONWithJONObject(jsonData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }

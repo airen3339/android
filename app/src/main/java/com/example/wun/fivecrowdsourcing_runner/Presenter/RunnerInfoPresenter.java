@@ -21,7 +21,7 @@ public class RunnerInfoPresenter {
     }
 
     public void sendRunnerInfo(String name, String phone, Runner runner) {
-        this.runner.setRunnerId((runner.getRunnerId()));
+        this.runner.setRunnerid((runner.getRunnerid()));
         this.runner.setName(name);
 
         this.runner.setPhone(phone);
@@ -30,11 +30,9 @@ public class RunnerInfoPresenter {
     }
 
     public void sendRunnerInfo(String name, String phone, String s2, Runner runner) {
-        this.runner.setRunnerId((runner.getRunnerId()));
+        this.runner.setRunnerid((runner.getRunnerid()));
         this.runner.setName(name);
-
         this.runner.setPhone(phone);
-
         runnerInfoView.finishStep1(this.runner);
     }
 }

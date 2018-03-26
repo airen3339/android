@@ -25,7 +25,7 @@ import java.util.List;
  * Created by WUN on 2018/3/8.
  */
 @SuppressLint("ValidFragment")
-public class DeliveryFragment extends Fragment {
+public class DeliveryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     private Runner runner;
     protected SwipeRefreshLayout mRefreshLayout;
     protected RecyclerView mRecyclerView;
@@ -50,8 +50,10 @@ public class DeliveryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sending_order, container, false);
         mRecyclerView = view.findViewById(R.id.recycler_view_sending);
-        mRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_Layout_sending);
         deliveryPresenter.dispalyInitOrder(runner);
+        mRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_Layout_sending);
+        mRefreshLayout .setColorSchemeResources(new int[]{R.color.colorAccent, R.color.colorPrimary});
+        mRefreshLayout .setOnRefreshListener(this);
         return view;
     }
 
@@ -83,6 +85,18 @@ public class DeliveryFragment extends Fragment {
             DeliveryAdpater adpater = new  DeliveryAdpater(list);
             mRecyclerView.setAdapter(adpater);
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               deliveryPresenter.dispalyInitOrder(runner);
+                // 加载完数据设置为不刷新状态，将下拉进度收起来
+                mRefreshLayout.setRefreshing(false);
+            }
+        }, 2000);
     }
 
 //    private class MyLocationListener implements BDLocationListener {

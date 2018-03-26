@@ -42,7 +42,7 @@ public class DeliveryPresenter {
 
     private void sendRequestWithOkHttp(String servletIP, Runner runner) throws IOException {
         //转换成JSON格式
-        RequestBody requestBody = new FormBody.Builder().add("runnerId", String.valueOf(runner.getRunnerId())).
+        RequestBody requestBody = new FormBody.Builder().add("runnerId", String.valueOf(runner.getRunnerid())).
                 add("runnerLat", String.valueOf(runner.getLaititude())).add("runnerLong", String.valueOf(runner.getLongtitude())).build();
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().

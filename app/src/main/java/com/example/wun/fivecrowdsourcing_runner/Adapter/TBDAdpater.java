@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.wun.fivecrowdsourcing_runner.Bean.OrderBean;
+import com.example.wun.fivecrowdsourcing_runner.Bean.Runner;
+import com.example.wun.fivecrowdsourcing_runner.Fragment.TBDFragment;
+import com.example.wun.fivecrowdsourcing_runner.Presenter.TBDPresenter;
 import com.example.wun.fivecrowdsourcing_runner.R;
 
 import java.util.List;
@@ -17,9 +20,13 @@ import java.util.List;
 
 public class TBDAdpater extends RecyclerView.Adapter<TBDAdpater.ViewHolder>{
     private List<OrderBean> orderList;
-
-    public TBDAdpater(List<OrderBean> orderList) {
+    private TBDPresenter tbdPresenter = new TBDPresenter();
+    private Runner runner;
+    TBDFragment tbdFragment;
+    public TBDAdpater(List<OrderBean> orderList, Runner runner, TBDFragment tbdFragment) {
         this.orderList = orderList;
+        this.runner = runner;
+        this.tbdFragment = tbdFragment;
     }
 
     public List<OrderBean> getOrderList() {
@@ -48,6 +55,7 @@ public class TBDAdpater extends RecyclerView.Adapter<TBDAdpater.ViewHolder>{
             estimatedTime = itemView.findViewById(R.id.estimatedTime);
             cusName = itemView.findViewById(R.id.cusName);
             getOrder = itemView.findViewById(R.id.get_order);
+
         }
     }
 
@@ -67,6 +75,13 @@ public class TBDAdpater extends RecyclerView.Adapter<TBDAdpater.ViewHolder>{
         holder.estimatedTime.setText(deliveryOrder.getEstimatedtime()+"分钟");
         holder.estimatedPrice.setText(deliveryOrder.getEstimatedtotalprice()+"元");
         holder.getOrder.setText("抢单");
+        holder.getOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tbdPresenter.grap(deliveryOrder,runner,tbdFragment);
+            }
+        });
+
     }
 
     @Override

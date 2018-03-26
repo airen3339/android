@@ -215,6 +215,7 @@ public class Step3Activity extends AppCompatActivity implements Step3View {
     public void finishStep3(Runner runner) {
         //Toast.makeText(Step3Activity.this, "您已经填写完成所有信息，请等待审核!", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Step3Activity.this, MainActivity.class);
+        runner.setStatus("1");
         intent.putExtra("runner",runner);
         startActivity(intent);
     }
